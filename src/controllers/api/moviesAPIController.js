@@ -131,7 +131,7 @@ const moviesAPIController = {
                     },
                     data:confirm
                 }
-            }else{
+            } else{
                 respuesta ={
                     meta: {
                         status: 204,
@@ -160,7 +160,7 @@ const moviesAPIController = {
                     },
                     data:confirm
                 }
-            }else{
+            } else{
                 respuesta ={
                     meta: {
                         status: 204,

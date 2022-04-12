@@ -56,24 +56,87 @@ const moviesController = {
             });
     },
     //Aqui debo modificar para crear la funcionalidad requerida
-    'buscar': async (req, res) => {
-
+    'buscar': (req, res) => {
+        db.Movie
+            .findAll({
+                where: {
+                    title: { [Op.like]: req.query.titulo + '%'}
+                }
+            })
+            .then(movies => {
+                console.log("Esta son la cantidad de movies", movies.length)
+                if (movies.length ==  1) {
+                    console.log("Entro en el else if")
+                    db.Movie
+                        .findOne({
+                            where: {
+                                title: { [Op.like]: '%' + req.query.titulo + '%'}
+                            }
+                        })
+                        .then(movie => { 
+                            return res.render('moviesDetail', {movie})
+                        })
+                    
+                } else if (movies.length > 1){
+                    return res.render('moviesList', {movies})
+                } else {
+                    let title = req.query.titulo
+                    fetch(API + "&t=" + title)
+                   .then(response => response.json())
+                   .then((movie) => {
+                        return res.render('moviesDetailOmdb', {movie})
+                   })
+                }
+            })
+            .catch( err => console.log(err))
+        /*
+         -- Using Get -- 
         db.Movie
             .findOne({
                 where: {
-                    title: { [Op.like]: '%' + req.body.title + '%'}
+                    title: { [Op.like]: '%' + req.query.titulo + '%'}
                 }
             })
             .then(movie => {
+                console.log(movie)
                 if (movie) {
                     // return res.status(200).json(movie)
                     return res.render('moviesDetail', {movie})
                 } else {
-                   let moviesAPI =  fetch(API + "&t=" + req.body.title).then(response => response.json()); 
-                   return res.render('moviesDetailOmdb', {moviesAPI})
+                    let title = req.query.titulo
+                    fetch(API + "&t=" + title)
+                   .then(response => response.json())
+                   .then((movie) => {
+                        return res.render('moviesDetailOmdb', {movie})
+                   })
+                    
                 }
             })
-            .catch( err => console.log(err))
+            .catch( err => console.log(err))*/
+        /*
+        -- Using Post -- 
+        db.Movie
+            .findOne({
+                where: {
+                    title: { [Op.like]: '%' + req.body.titulo + '%'}
+                }
+            })
+            .then(movie => {
+                console.log(movie)
+                if (movie) {
+                    // return res.status(200).json(movie)
+                    return res.render('moviesDetail', {movie})
+                } else {
+                    let title = req.body.titulo
+                    fetch(API + "&t=" + title)
+                   .then(response => response.json())
+                   .then((movie) => {
+                        return res.render('moviesDetailOmdb', {movie})
+                   })
+                    
+                }
+            })
+            .catch( err => console.log(err))*/
     },
     //Aqui dispongo las rutas para trabajar con el CRUD
     add: function (req, res) {
